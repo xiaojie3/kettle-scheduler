@@ -1,0 +1,46 @@
+server:
+  port: 81
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@127.0.0.1:1521:orcl
+    username: kettle
+    password: kettle
+  quartz:
+    auto-startup: false
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: clusteredScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: false
+            clusterCheckinInterval: 10000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: embedded
+
+beetlsql:
+  sqlManagers: sqlManager1
+  sqlManager1: 
+    ds: ds1
+    basePackage: com.qzdatasoft.etl.mapper
+    dbStyle: org.beetl.sql.core.db.OracleStyle
+logging:
+  level:
+    root: info
+    com.qzdatasoft.etl: debug
+#mybatis:
+#  type-aliases-package: com.qzdatasoft.mapper.etl.mapper
+#  configuration:
+#    jdbc-type-for-null: 'null'

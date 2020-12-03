@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>home</title>
+<link rel="stylesheet" href="dist/layui@2.5.6/css/layui.css">
+<style>
+.search_view {
+	height: 30px;
+	line-height: 30px;
+	font-size: 12px;
+	float: right
+}
+
+.search_view div {
+	display: inline-block
+}
+
+.search_view select, input {
+	border-color: #e6e6e6
+}
+</style>
+</head>
+<body class="layui-layout-body">
+	<div class="layui-layout layui-layout-admin">
+		<div class="layui-header">
+			<div class="layui-logo">Kettle</div>
+		</div>
+
+		<div class="layui-side layui-bg-black">
+			<div class="layui-side-scroll">
+				<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+				<ul class="layui-nav layui-nav-tree">
+					<li class="layui-nav-item"><a href="/">首页</a></li>
+					<li class="layui-nav-item layui-nav-itemed"><a class="" href="javascript:;">任务管理</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="zygl.html">作业管理</a>
+							</dd>
+							<dd>
+								<a href="javascript:;">定时作业</a>
+							</dd>
+							<dd>
+								<a href="">超链接</a>
+							</dd>
+						</dl></li>
+					<li class="layui-nav-item"><a href="javascript:;">解决方案</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="javascript:;">列表一</a>
+							</dd>
+							<dd>
+								<a href="javascript:;">列表二</a>
+							</dd>
+							<dd>
+								<a href="">超链接</a>
+							</dd>
+						</dl></li>
+					<li class="layui-nav-item"><a href="">云市场</a></li>
+					<li class="layui-nav-item"><a href="">发布商品</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="layui-body" style="bottom: 0;">
+			<!-- 内容主体区域 -->
+			<div style="padding: 15px;">
+				<div style="height: 30px;">
+					<div class="search_view">
+						<select name="cxzd" style="width: 80px; height: 100%">
+							<option value="name">作业名称</option>
+							<option value="path">路径</option>
+						</select> <select name="jsfh" style="width: 80px; height: 100%; margin-left: -4px; margin-right: -5px;">
+							<option value="like">像</option>
+							<option value="not like">不像</option>
+							<option value="=">等于</option>
+							<option value="<>">不等于</option>
+							<option value=">=">大于等于</option>
+							<option value=">">大于</option>
+							<option value="<">小于</option>
+							<option value="<=">小于等于</option>
+						</select>
+						<div style="width: 100px; height: 28px; border-width: 1px; border-style: solid; border-color: #e6e6e6">
+							<input name="cxzf" style="width: 100%; border-width: 0px;" type="text" />
+						</div>
+
+						<button style="border: none; width: 50px; height: 100%; background-color: #009688; color: #fff; border-radius: 2px;" class="search-btn" data-type="reload">搜索</button>
+					</div>
+				</div>
+				<div>
+					<table id="test" lay-filter="demo"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="dist/jquery@3.5.1/jquery.min.js"></script>
+	<script src="dist/layui@2.5.6/layui.js"></script>
+	<script type="text/html" id="toolbarDemo">
+	  <div class="layui-btn-container">
+		<button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+		<button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+		<button class="layui-btn layui-btn-sm" lay-event="update">编辑</button>
+	  </div>
+	</script>
+	<script type="text/html" id="barDemo">
+		<a class="layui-btn layui-btn-xs" lay-event="start">手动</a>
+		<!-- 这里同样支持 laytpl 语法，如： -->
+  		{{#  if(d.quarStatus == "定时运行中"){ }}
+    		<a class="layui-btn layui-btn-xs" lay-event="stop">停止</a>
+  		{{#  } else { }}
+			<a class="layui-btn layui-btn-xs" lay-event="run">定时</a>
+		{{#  } }}
+		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+	</script>
+	<script>
+		//JavaScript代码区域
+		layui.use('element', function() {
+			var element = layui.element;
+
+		});
+
+		layui.use('form', function() {
+			var form = layui.form;
+
+			//各种基于事件的操作，下面会有进一步介绍
+		});
+
+		layui.use('table', function() {
+			var table = layui.table;
+
+			table.render({
+				elem : '#test',
+				url : '/quartzJob/list',
+				page : true,
+				limit : 15,
+				parseData : function(res) { //res 即为原始返回的数据
+					return {
+						"code" : 0, //解析接口状态
+						"msg" : "", //解析提示文本
+						"count" : res.count, //解析数据长度
+						"data" : res.rows
+					//解析数据列表
+					};
+				},
+				cols : [ [ //表头
+				{
+					checkbox : true,
+					fixed : true
+				}, {
+					field : 'objectId',
+					title : 'ID',
+					sort : true,
+					width : 80,
+					align : 'center'
+				}, {
+					field : 'repoId',
+					title : 'repoID',
+					hide : true
+				}, {
+					field : 'name',
+					title : '作业名称',
+					width : 300,
+				}, {
+					field : 'path',
+					title : '路径',
+				}, {
+					field : 'description',
+					title : '描述',
+				}, {
+					field : 'cron',
+					title : '定时设置',
+				}, {
+					field : 'quarStatus',
+					title : '定时状态',
+				}, {
+					field : 'logLevel',
+					title : '日志等级',
+				}, {
+					field : 'modifiedDate',
+					title : '更新时间',
+				}, {
+					fixed : 'right',
+					field : 'objectId'
+					title : '操作',
+					width : 200,
+					align : 'center',
+					toolbar : '#barDemo'
+				} ] ]
+				//,…… //其他参数
+				,
+				id : 'testReload'
+			});
+			// 监听工具条
+			table.on('tool(demo)',
+					function(obj) {
+						// 获取当前行数据
+						var data = obj.data;
+						// 获取当前按钮
+						var btn = $(this);
+						// 如果按钮是手动
+						if (obj.event === 'start') {
+							// 判断按钮是否已经禁用
+							if (!btn.hasClass("layui-btn-disabled")) {
+								// 未禁用则禁用
+								btn.addClass("layui-btn-disabled");
+								// 拼接请求地址
+								var url = "/job/start/" + data.repoId + "/"
+										+ data.objectId;
+								// 异步请求
+								$.get(url, function(data) {
+									// 提示用户请求结果
+									layer.msg(data);
+									// 删除禁用
+									btn.removeClass("layui-btn-disabled");
+								});
+							} else {
+								console.log("定时运行中");
+							}
+						} else if (obj.event === 'run') {
+							var url = "/quartzJob/doStart/" + data.repoId + "/"
+									+ data.objectId;
+							// 异步请求
+							$.get(url, function(data) {
+								obj.update({
+									quarStatus : data
+								});
+							});
+						} else if (obj.event === 'stop') {
+							var url = "/quartzJob/doStop/" + data.repoId + "/"
+									+ data.objectId;
+							// 异步请求
+							$.get(url, function(data) {
+								obj.update({
+									quarStatus : data
+								});
+							});
+						} else if (obj.event === 'edit') {
+							layer.alert('编辑行：<br>' + JSON.stringify(data))
+						}
+					});
+
+			var $ = layui.$, active = {
+				reload : function() {
+					var cxzd = $(".search_view select[name='cxzd']").val();
+					var jsfh = $(".search_view select[name='jsfh']").val();
+					var cxzf = $(".search_view input[name='cxzf']").val();
+					//执行重载
+					table.reload('testReload', {
+						page : {
+							curr : 1
+						//重新从第 1 页开始
+						},
+						where : {
+							cxzd : cxzd,
+							jsfh : jsfh,
+							cxzf : cxzf,
+						}
+					}, 'data');
+				}
+			};
+
+			$('.search-btn').on('click', function() {
+				var type = $(this).data('type');
+				active[type] ? active[type].call(this) : '';
+			});
+		});
+	</script>
+</body>
+</html>
