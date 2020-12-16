@@ -32,7 +32,7 @@ public class KettleUtil {
 
 	public static void init() throws KettleException {
 		KettleEnvironment.init();
-		DatabaseMeta databaseMeta = new DatabaseMeta(null, "ORACLE", "Native", "localhost", "orcl", "1521", "kettle",
+		DatabaseMeta databaseMeta = new DatabaseMeta(null, "ORACLE", "Native", "192.168.164.200", "orcl", "1521", "kettle",
 				"kettle");
 		KettleDatabaseRepositoryMeta repositoryInfo = new KettleDatabaseRepositoryMeta();
 		repositoryInfo.setConnection(databaseMeta);
@@ -44,14 +44,14 @@ public class KettleUtil {
 
 	public static synchronized RJobLog runTranslate(RJobPojo jobPojo) {
 		log.info("运行了：" + jobPojo.toString());
-		try {
+		/*try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
-		/*Date jobStartDate = null;
+		return null;*/
+		Date jobStartDate = null;
 		Integer recordStatus = Integer.valueOf(1);
 		Date jobStopDate = null;
 		String logText = null;
@@ -96,6 +96,6 @@ public class KettleUtil {
 			jobLog.setStatus(recordStatus);
 			jobLog.setLogPath(allLogFilePath.toString());
 		}
-		return jobLog;*/
+		return jobLog;
 	}
 }

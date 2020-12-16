@@ -11,6 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.qzdatasoft.etl.mapper.RJobLogMapper;
 
+import javax.annotation.Resource;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class KettleSchedulerApplicationTests {
@@ -19,12 +21,12 @@ public class KettleSchedulerApplicationTests {
 	@Autowired
 	private Scheduler scheduler;
 	
-	@Autowired
+	@Resource
 	private RJobLogMapper rJobLogMapper;
 	
 	@Test
 	public void contextLoads() throws SchedulerException {
 		
-		System.out.println(rJobLogMapper.list().toString());
+		System.out.println(rJobLogMapper.list(null,null,null,null,null).size());
 	}
 }

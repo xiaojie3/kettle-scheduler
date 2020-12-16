@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@127.0.0.1:1521:orcl
+    url: jdbc:oracle:thin:@192.168.164.200:1521:orcl
     username: kettle
     password: kettle
   quartz:
@@ -12,7 +12,7 @@ spring:
       org:
         quartz:
           scheduler:
-            instanceName: clusteredScheduler
+            instanceName: DefaultQuartzScheduler
             instanceId: AUTO
           jobStore:
             class: org.quartz.impl.jdbcjobstore.JobStoreTX
@@ -29,7 +29,7 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: embedded
-
+    wait-for-jobs-to-complete-on-shutdown: true
 beetlsql:
   sqlManagers: sqlManager1
   sqlManager1: 

@@ -41,24 +41,7 @@
 							<dd>
 								<a href="javascript:;">定时作业</a>
 							</dd>
-							<dd>
-								<a href="">超链接</a>
-							</dd>
 						</dl></li>
-					<li class="layui-nav-item"><a href="javascript:;">解决方案</a>
-						<dl class="layui-nav-child">
-							<dd>
-								<a href="javascript:;">列表一</a>
-							</dd>
-							<dd>
-								<a href="javascript:;">列表二</a>
-							</dd>
-							<dd>
-								<a href="">超链接</a>
-							</dd>
-						</dl></li>
-					<li class="layui-nav-item"><a href="">云市场</a></li>
-					<li class="layui-nav-item"><a href="">发布商品</a></li>
 				</ul>
 			</div>
 		</div>
@@ -181,7 +164,7 @@
 					title : '更新时间',
 				}, {
 					fixed : 'right',
-					field : 'objectId'
+					field : 'objectId',
 					title : '操作',
 					width : 200,
 					align : 'center',
@@ -195,9 +178,9 @@
 			table.on('tool(demo)',
 					function(obj) {
 						// 获取当前行数据
-						var data = obj.data;
+						const data = obj.data;
 						// 获取当前按钮
-						var btn = $(this);
+						const btn = $(this);
 						// 如果按钮是手动
 						if (obj.event === 'start') {
 							// 判断按钮是否已经禁用
@@ -205,7 +188,7 @@
 								// 未禁用则禁用
 								btn.addClass("layui-btn-disabled");
 								// 拼接请求地址
-								var url = "/job/start/" + data.repoId + "/"
+								const url = "/job/start/" + data.repoId + "/"
 										+ data.objectId;
 								// 异步请求
 								$.get(url, function(data) {
