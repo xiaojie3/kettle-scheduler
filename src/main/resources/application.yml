@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@192.168.164.200:1521:orcl
+    url: jdbc:oracle:thin:@localhost:1521:orcl
     username: kettle
     password: kettle
   quartz:
