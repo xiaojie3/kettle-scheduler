@@ -20,7 +20,12 @@ import org.pentaho.di.trans.TransMeta;
 
 public class Main {
 	public static void main(String[] args) throws KettleException {
-		KettleEnvironment.init();
+		String str = "jdbc:oracle:thin:@localhost:1521:orcl";
+		int i = str.indexOf("@");
+		int j = str.indexOf(":",i);
+		String host = str.substring(i + 1,j);
+		System.out.println(host);
+		/*KettleEnvironment.init();
 		DatabaseMeta databaseMeta = new DatabaseMeta(null, "ORACLE", "Native", "localhost", "orcl", "1521", "kettle",
 				"kettle");
 		KettleDatabaseRepositoryMeta repositoryInfo = new KettleDatabaseRepositoryMeta();
@@ -40,7 +45,7 @@ public class Main {
 	      } catch (Exception e) {
 	      } finally {
 	    	  System.out.println("1111111111111111111111");
-	      }
+	      }*/
 	}
 
 	public static void runTranslate(KettleDatabaseRepository repository, RepositoryDirectoryInterface directory,

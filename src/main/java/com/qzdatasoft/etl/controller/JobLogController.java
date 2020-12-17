@@ -22,10 +22,6 @@ public class JobLogController {
 
     @GetMapping()
     public ResponseEntity<Limit> list(Integer page, Integer limit, String cxzd, String jsfh, String cxzf) {
-        List<Map<String, Object>> list = jobLogService.list(page,limit,cxzd,jsfh,cxzf);
-        Limit l = new Limit();
-        l.setRows(list);
-        l.setCount((long) list.size());
-        return ResponseEntity.ok(l);
+        return ResponseEntity.ok(jobLogService.list(page,limit,cxzd,jsfh,cxzf));
     }
 }

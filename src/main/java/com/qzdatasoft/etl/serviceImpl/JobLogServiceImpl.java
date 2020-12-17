@@ -15,26 +15,29 @@ import com.qzdatasoft.etl.service.JobLogService;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+
 @Slf4j
 @Service("jobLogService")
-public class JobLogServiceImpl implements JobLogService{
+public class JobLogServiceImpl implements JobLogService {
 
-	@Resource
-	private RJobLogMapper jobLogMapper;
-	
-	@Override
-	public void insert(RJobLog jobLog) {
-		// TODO Auto-generated method stub
-		if(null != jobLog) {
-			jobLogMapper.insert(jobLog);
-		}
-	}
+    @Resource
+    private RJobLogMapper jobLogMapper;
 
-	@Override
-	public List<Map<String, Object>> list(Integer page, Integer limit, String cxzd, String jsfh, String cxzf) {
-		// TODO Auto-generated method stub
+    @Override
+    public void insert(RJobLog jobLog) {
+        // TODO Auto-generated method stub
+        if (null != jobLog) {
+            jobLogMapper.insert(jobLog);
+        }
+    }
 
-		return jobLogMapper.list(page,limit,cxzd,jsfh,cxzf);
-	}
-
+    @Override
+    public Limit list(Integer page, Integer limit, String cxzd, String jsfh, String cxzf) {
+        // TODO Auto-generated method stub
+        List<Map<String, Object>> list = jobLogMapper.list(page, limit, cxzd, jsfh, cxzf);
+        Limit limit1 = new Limit();
+        limit1.setRows(list);
+        limit1.setCount(jobLogMapper.count(cxzd, jsfh, cxzf));
+        return limit1;
+    }
 }

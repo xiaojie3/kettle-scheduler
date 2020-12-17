@@ -19,6 +19,7 @@ import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.RepositoryMeta;
 import org.pentaho.di.repository.kdr.KettleDatabaseRepository;
 import org.pentaho.di.repository.kdr.KettleDatabaseRepositoryMeta;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.ClassUtils;
 
 import com.qzdatasoft.etl.pojo.RJobLog;
@@ -28,22 +29,47 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class KettleUtil {
-	public static KettleDatabaseRepository kettleDatabaseRepository;
+    public static KettleDatabaseRepository kettleDatabaseRepository;
 
-	public static void init() throws KettleException {
-		KettleEnvironment.init();
-		DatabaseMeta databaseMeta = new DatabaseMeta(null, "ORACLE", "Native", "192.168.164.200", "orcl", "1521", "kettle",
-				"kettle");
-		KettleDatabaseRepositoryMeta repositoryInfo = new KettleDatabaseRepositoryMeta();
-		repositoryInfo.setConnection(databaseMeta);
+    @Value("${spring.datasource.url}")
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-		kettleDatabaseRepository = new KettleDatabaseRepository();
-		kettleDatabaseRepository.init((RepositoryMeta) repositoryInfo);
-		kettleDatabaseRepository.connect("admin", "admin");
-	}
+    private static String url;
 
-	public static synchronized RJobLog runTranslate(RJobPojo jobPojo) {
-		log.info("运行了：" + jobPojo.toString());
+    @Value("${spring.datasource.username}")
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    private static String username;
+
+    @Value("${spring.datasource.password}")
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    private static String password;
+
+    public static void init() throws KettleException {
+        KettleEnvironment.init();
+        int i = url.indexOf("@");
+        int j = url.indexOf(":", i);
+        String host = url.substring(i + 1, j);
+        DatabaseMeta databaseMeta = new DatabaseMeta(null, "ORACLE", "Native", host, "orcl", "1521", username,
+                password);
+
+        KettleDatabaseRepositoryMeta repositoryInfo = new KettleDatabaseRepositoryMeta();
+        repositoryInfo.setConnection(databaseMeta);
+
+        kettleDatabaseRepository = new KettleDatabaseRepository();
+        kettleDatabaseRepository.init((RepositoryMeta) repositoryInfo);
+        kettleDatabaseRepository.connect("admin", "admin");
+    }
+
+    public static synchronized RJobLog runTranslate(RJobPojo jobPojo) {
+        log.info("运行了：" + jobPojo.toString());
 		/*try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
@@ -51,51 +77,51 @@ public class KettleUtil {
 			e.printStackTrace();
 		}
 		return null;*/
-		Date jobStartDate = null;
-		Integer recordStatus = Integer.valueOf(1);
-		Date jobStopDate = null;
-		String logText = null;
-		RJobLog jobLog = new RJobLog();
-		StringBuilder allLogFilePath = new StringBuilder();
-		try {
-			if (null == kettleDatabaseRepository) {
-				init();
-			}
-			RepositoryDirectoryInterface directory = kettleDatabaseRepository.loadRepositoryDirectoryTree()
-					.findDirectory(jobPojo.getPath());
-			JobMeta jobMeta = kettleDatabaseRepository.loadJob(jobPojo.getName(), directory,
-					(ProgressMonitorListener) new ProgressNullMonitorListener(), null);
-			Job job = new Job((Repository) kettleDatabaseRepository, jobMeta);
-			job.setDaemon(true);
-			job.setLogLevel(LogLevel.BASIC);
-			jobStartDate = new Date();
-			job.run();
-			job.waitUntilFinished();
-			jobStopDate = new Date();
-			if (job.getErrors() > 0) {
-				recordStatus = Integer.valueOf(0);
-				logText = job.getResult().getLogText();
-			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-			allLogFilePath.append(ClassUtils.getDefaultClassLoader().getResource("").getPath()).append("log/")
-					.append("@").append(jobPojo.getObjectId()).append(jobPojo.getName()).append("-log").append("/")
-					.append(sdf.format(new Date())).append(".").append("txt");
-			log.info(allLogFilePath.toString());
-			FileUtils.writeStringToFile(new File(allLogFilePath.toString()), logText);
-		} catch (KettleException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			jobLog.setObjectId(jobPojo.getObjectId());
-			jobLog.setRepoId(jobPojo.getRepoId());
-			jobLog.setStartTime(jobStartDate);
-			jobLog.setStopTime(jobStopDate);
-			jobLog.setStatus(recordStatus);
-			jobLog.setLogPath(allLogFilePath.toString());
-		}
-		return jobLog;
-	}
+        Date jobStartDate = null;
+        Integer recordStatus = Integer.valueOf(1);
+        Date jobStopDate = null;
+        String logText = null;
+        RJobLog jobLog = new RJobLog();
+        StringBuilder allLogFilePath = new StringBuilder();
+        try {
+            if (null == kettleDatabaseRepository) {
+                init();
+            }
+            RepositoryDirectoryInterface directory = kettleDatabaseRepository.loadRepositoryDirectoryTree()
+                    .findDirectory(jobPojo.getPath());
+            JobMeta jobMeta = kettleDatabaseRepository.loadJob(jobPojo.getName(), directory,
+                    (ProgressMonitorListener) new ProgressNullMonitorListener(), null);
+            Job job = new Job((Repository) kettleDatabaseRepository, jobMeta);
+            job.setDaemon(true);
+            job.setLogLevel(LogLevel.BASIC);
+            jobStartDate = new Date();
+            job.run();
+            job.waitUntilFinished();
+            jobStopDate = new Date();
+            if (job.getErrors() > 0) {
+                recordStatus = Integer.valueOf(0);
+                logText = job.getResult().getLogText();
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+            allLogFilePath.append(ClassUtils.getDefaultClassLoader().getResource("").getPath()).append("log/")
+                    .append("@").append(jobPojo.getObjectId()).append(jobPojo.getName()).append("-log").append("/")
+                    .append(sdf.format(new Date())).append(".").append("txt");
+            log.info(allLogFilePath.toString());
+            FileUtils.writeStringToFile(new File(allLogFilePath.toString()), logText);
+        } catch (KettleException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            jobLog.setObjectId(jobPojo.getObjectId());
+            jobLog.setRepoId(jobPojo.getRepoId());
+            jobLog.setStartTime(jobStartDate);
+            jobLog.setStopTime(jobStopDate);
+            jobLog.setStatus(recordStatus);
+            jobLog.setLogPath(allLogFilePath.toString());
+        }
+        return jobLog;
+    }
 }
